@@ -3,25 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace modelController {
 	public class BoatModel {
-		GameObject boat;                                          
-		Vector3[] start_empty_pos;                                    
-		Vector3[] end_empty_pos;                                      
-		Move move;                                                    
-		Click click;
-		int boat_sign = 1;                                                     
-		RoleModel[] roles = new RoleModel[2];                                  
+		GameObject boat;//船                                  
+		Vector3[] start_empty_pos; //开始位置                                  
+		Vector3[] end_empty_pos; //结束位置                             
+		Move move; //移动                           
+		Click click;//点击
+		int boat_sign = 1;//船所在的河岸                                                     
+		RoleModel[] roles = new RoleModel[2]; //船上的人                             
 
-		public BoatModel() {
-			boat = Object.Instantiate(Resources.Load("Prefabs/Boat", typeof(GameObject)), new Vector3(25, -2.5F, 0), Quaternion.identity) as GameObject;
-			boat.name = "boat";
-			move = boat.AddComponent(typeof(Move)) as Move;
-			click = boat.AddComponent(typeof(Click)) as Click;
-			click.SetBoat(this);
-			start_empty_pos = new Vector3[] {new Vector3(18, 4, 0), new Vector3(32, 4, 0)};
-			end_empty_pos = new Vector3[] {new Vector3(-32, 4, 0), new Vector3(-18, 3, 0)};
+		public BoatModel() {//构造函数
+			boat = Object.Instantiate(Resources.Load("Prefabs/Boat", typeof(GameObject)), new Vector3(25, -2.5F, 0), Quaternion.identity) as GameObject;//载入船的预制
+			boat.name = "boat";//命名
+			move = boat.AddComponent(typeof(Move)) as Move;//添加元素
+			click = boat.AddComponent(typeof(Click)) as Click;//添加元素
+			click.SetBoat(this);//设置点击对应当前的船
+			start_empty_pos = new Vector3[] {new Vector3(18, 4, 0), new Vector3(32, 4, 0)};//设置船在河岸一边的位置
+			end_empty_pos = new Vector3[] {new Vector3(-32, 4, 0), new Vector3(-18, 3, 0)};//设置船在河岸另一边的位置
 		}
 
-		public bool IsEmpty() {
+		public bool IsEmpty() {//判断船是否为空
 			for (int i = 0; i < roles.Length; i++) {
 				if (roles[i] != null)
 					return false;
@@ -29,22 +29,21 @@ namespace modelController {
 			return true;
 		}
 
-		public void BoatMove() {
+		public void BoatMove() {//船移动到对岸
 			if (boat_sign == -1) {
 				move.MovePosition(new Vector3(25, -2.5F, 0));
 				boat_sign = 1;
-			}
-			else {
+			} else {
 				move.MovePosition(new Vector3(-25, -2.5F, 0));
 				boat_sign = -1;
 			}
 		}
 
-		public int GetBoatSign() { 
+		public int GetBoatSign() {//获得船当前所在的河岸
 			return boat_sign;
 		}
 
-		public RoleModel DeleteRoleByName(string role_name)	{
+		public RoleModel DeleteRoleByName(string role_name)	{//通过角色的名字删除船上的一个角色
 			for (int i = 0; i < roles.Length; ++i) {
 				if (roles[i] != null && roles[i].GetName() == role_name) {
 					RoleModel role = roles[i];
@@ -55,7 +54,7 @@ namespace modelController {
 			return null;
 		}
 
-		public int GetEmptyNumber() {
+		public int GetEmptyNumber() {//获得船上一个空的位置
 			for (int i = 0; i < roles.Length; i++) {
 				if (roles[i] == null) {
 					return i;
@@ -64,7 +63,7 @@ namespace modelController {
 			return -1;
 		}
 
-		public Vector3 GetEmptyPosition() {
+		public Vector3 GetEmptyPosition() {//获得船上一个空位置对应的具体三维坐标
 			Vector3 pos;
 			if (boat_sign == -1)
 				pos = end_empty_pos[GetEmptyNumber()];
@@ -73,15 +72,15 @@ namespace modelController {
 			return pos;
 		}
 
-		public void AddRole(RoleModel role) {
+		public void AddRole(RoleModel role) {//增加一个角色
 			roles[GetEmptyNumber()] = role;
 		}
 
-		public GameObject GetBoat() {
+		public GameObject GetBoat() {//返回船
 			return boat; 
 		}
 
-		public int[] GetRoleNumber() {
+		public int[] GetRoleNumber() {//获得当前船上的角色(通过一个存储2个元素的数组表示牧师/魔鬼的计数)
 			int[] count = {0, 0};
 			for (int i = 0; i < roles.Length; i++) {
 				if (roles[i] == null)
