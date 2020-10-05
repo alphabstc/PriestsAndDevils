@@ -5,12 +5,11 @@ using interfaceController;
 
 public class UserGUI : MonoBehaviour {
 
-	private IUserAction action;
-	public int sign = 0;
+	private IUserAction action;//场景主控制器
+	public int sign = 0;//游戏状态
 
-	bool isShow = false;
-	void Start()
-	{
+	bool isShow = false;//是否显示规则
+	void Start() {
 		action = GameDirector.GetInstance().CurrentScenceController as IUserAction;
 	}
 	void OnGUI()
